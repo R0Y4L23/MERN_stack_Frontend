@@ -3,6 +3,7 @@ import Image from 'next/image'
 import { useRouter } from 'next/router';
 import pic from '../Assets/regscreen.jpg'
 import {toast} from "react-toastify"
+import CircularProgress from '@mui/material/CircularProgress';
 var axios = require('axios');
 var FormData = require('form-data');
 
@@ -18,9 +19,11 @@ const Register = () => {
     const [age,setAge]=useState('');
     const [bio,setBio]=useState('');
     const [accept,setAccept]=useState(false);
+    const [loading,setLoading]=useState(false);
 
 
     const register = () => {
+        setLoading(true);
         var data = new FormData();
         data.append('username', username);
         data.append('name', name);
@@ -42,18 +45,22 @@ const Register = () => {
                     toast.error(response.data.Message);
                 } else {
                     toast.success("Registered Successfully");
+                    sessionStorage.setItem('token', response.data.Token);
                     router.push('/main');
                 }
+                setLoading(false);
             })
             .catch(function (error) {
                 let e = error.response.data.errors;
                 e.forEach(function (error) {
                     toast.error(error.msg)
                 });
+                setLoading(false);
             });
     }
 
     const login = () => {
+        setLoading(true);
         var data = new FormData();
         data.append('email', email);
         data.append('password', password);
@@ -73,12 +80,14 @@ const Register = () => {
                     sessionStorage.setItem('token', response.data.Token);
                     router.push('/main');
                 }
+                setLoading(false);
             })
             .catch(function (error) {
                 let e = error.response.data.errors;
                 e.forEach(function (error) {
                     toast.error(error.msg)
                 });
+                setLoading(false);
             });
 
     }
@@ -152,7 +161,7 @@ const Register = () => {
                             login();
                             }
                             }}
-                            disabled={willBeRegister?((!accept)||!(password==confirm)||(password=="")):(false)}>{willBeRegister?"Register":"Login"}</button>
+                            disabled={willBeRegister?((!accept)||!(password==confirm)||(password=="")):(false)}>{loading?<CircularProgress/>:(willBeRegister?"Register":"Login")}</button>
                     </div>
                 </form>
             </div>
