@@ -84,7 +84,7 @@ const Register = () => {
     }
 
     return (
-        <div className={`flex bg-yellow-200 ${willBeRegister?"h-full":"h-screen"}`}>
+        <div className={`flex bg-yellow-200 min-h-screen`}>
             <div className="lg:w-1/3 md:w-1/2 md:block hidden my-auto px-5">
                 <Image src={pic} alt="Register Screen" />
             </div>
@@ -96,44 +96,44 @@ const Register = () => {
                 <p className="text-center md:text-2xl text-lg mt-5">Access any types of jokes , quotes , memes , facts and many
                     more.</p>
                 <p className="text-center md:text-2xl text-lg mt-5 cursor-pointer"><span
-                        className={`px-4 py-1 ${!willBeRegister?"font-semibold bg-yellow-200":""} mr-16`}
+                        className={`px-4 py-1 rounded-2xl ${!willBeRegister?"font-semibold bg-yellow-200":""} mr-16`}
                         onClick={()=>{setWillBeRegister(false)}}>Login</span> <span
-                        className={`px-4 py-1 ${willBeRegister?"font-semibold bg-yellow-200":""}`}
+                        className={`px-4 py-1 rounded-2xl ${willBeRegister?"font-semibold bg-yellow-200":""}`}
                         onClick={()=>{setWillBeRegister(true)}}>Register</span></p>
-                <form action="" className="w-1/2 mx-auto mb-16">
+                <form action="" className="md:w-1/2 w-3/4 mx-auto mb-16 mt-10">
                     {willBeRegister&&<div className="flex flex-col mt-4">
                         <label className="text-xl font-semibold">Username</label>
-                        <input type="text" className="w-full mt-2 p-2 border border-gray-400" value={username}
+                        <input type="text" className="w-full mt-2 p-2 border rounded-lg border-gray-400" value={username}
                             onChange={(e)=>{setUsername(e.target.value)}}/>
                     </div>}
                     {willBeRegister&&<div className="flex flex-col mt-4">
                         <label className="text-xl font-semibold">Name</label>
-                        <input type="text" className="w-full mt-2 p-2 border border-gray-400" value={name}
+                        <input type="text" className="w-full mt-2 p-2 border rounded-lg border-gray-400" value={name}
                             onChange={(e)=>{setName(e.target.value)}}/>
                     </div>}
                     <div className="flex flex-col mt-4">
                         <label className="text-xl font-semibold">Email</label>
-                        <input type="email" className="w-full mt-2 p-2 border border-gray-400" value={email}
+                        <input type="email" className="w-full mt-2 p-2 border rounded-lg border-gray-400" value={email}
                             onChange={(e)=>{setEmail(e.target.value)}}/>
                     </div>
                     <div className="flex flex-col mt-4">
                         <label className="text-xl font-semibold">Password</label>
-                        <input type="password" className="w-full mt-2 p-2 border border-gray-400" value={password}
+                        <input type="password" className="w-full mt-2 p-2 border rounded-lg border-gray-400" value={password}
                             onChange={(e)=>{setPassword(e.target.value)}}/>
                     </div>
                     {willBeRegister&&<div className="flex flex-col mt-4">
                         <label className="text-xl font-semibold">Confirm Password</label>
-                        <input type="password" className="w-full mt-2 p-2 border border-gray-400" value={confirm}
+                        <input type="password" className="w-full mt-2 p-2 border rounded-lg border-gray-400" value={confirm}
                             onChange={(e)=>{setConfirm(e.target.value)}}/>
                     </div>}
                     {willBeRegister&&<div className="flex flex-col mt-4">
                         <label className="text-xl font-semibold">Age</label>
-                        <input type="text" className="w-full mt-2 p-2 border border-gray-400" value={age}
+                        <input type="text" className="w-full mt-2 p-2 border rounded-lg border-gray-400" value={age}
                             onChange={(e)=>{setAge(e.target.value)}}/>
                     </div>}
                     {willBeRegister&&<div className="flex flex-col mt-4">
                         <label className="text-xl font-semibold">Bio</label>
-                        <input type="text" className="w-full mt-2 p-2 border border-gray-400" value={bio}
+                        <input type="text" className="w-full mt-2 p-2 border rounded-lg border-gray-400" value={bio}
                             onChange={(e)=>{setBio(e.target.value)}}/>
                     </div>}
                     {willBeRegister&&<div className="flex flex-col mt-4">
