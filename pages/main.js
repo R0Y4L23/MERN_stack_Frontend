@@ -16,10 +16,9 @@ const Main = () => {
     var month = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul","Aug", "Sep", "Oct", "Nov", "Dec"];
 
     const getDate = (m) => {
-        return m.slice(8,10) + " " + month[Number(m.slice(5,7)) - 1] + " " + m.slice(0,4);
+        return m.slice(8,10) + " " + month[Number(m.slice(5,7)) - 1];
     }
         
-
     const [title,setTitle]=useState('');
     const [type,setType]=useState('');
     const [posts,setPosts]=useState([]);
@@ -97,6 +96,7 @@ const Main = () => {
 
     const logout = () => {
         sessionStorage.removeItem('token')
+        toast.success("Logged Out Successfully");
         router.push('/')
     }
 
@@ -104,12 +104,12 @@ const Main = () => {
         <div className="bg-yellow-200 min-h-screen p-6 lg:px-28 sm:px-12 px-3">
             <div className="sm:flex align-middle">
                 <div className="sm:w-2/3 w-full">
-                    <h1 className="md:text-4xl sm:text-2xl text-4xl sm:text-left text-center"><span className="text-yellow-400">Simply</span> <span
-                            className="text-blue-300">!!!</span> 😂</h1>
+                    <h1 className="md:text-4xl sm:text-2xl text-4xl sm:text-left text-center"><span
+                            className="text-yellow-400">Simply</span> <span className="text-blue-300">!!!</span> 😂</h1>
                 </div>
                 <div className="flex sm:w-1/3 w-full sm:mt-0 mt-8 justify-between">
                     <h1 className="md:text-2xl text-lg cursor-pointer underline font-semibold">Posts</h1>
-                    <h1 className="md:text-2xl text-lg cursor-pointer">Profile</h1>
+                    <h1 className="md:text-2xl text-lg cursor-pointer" onClick={()=>{router.push("/profile")}}>Profile</h1>
                     <h1 className="md:text-2xl text-lg cursor-pointer" onClick={logout}>Logout</h1>
                 </div>
             </div>
@@ -128,36 +128,62 @@ const Main = () => {
                             <option value="thought">Thought</option>
                         </select>
                         <button className="bg-yellow-400 text-white font-semibold p-3 rounded-lg w-1/4"
-                            onClick={post}>{loading?<CircularProgress/>:"Post"}</button>
+                            onClick={post}>{loading?
+                            <CircularProgress />:"Post"}</button>
                     </div>
                     <div className="lg:w-4/5 w-full">
                         {posts.length>0&&posts.map((post,index)=>{
                         return <div className="flex justify-between mt-8 mb-16" key={index}>
                             <div className="sm:w-3/5 w-5/7">
-                                <h1 className="text-2xl">{post.title}</h1>
+                                <h1 className="text-2xl italic">{'"'+post.title+'"'}</h1>
                                 <div className="flex">
-                                    <h1 className="text-sm capitalize mt-2 mr-4">{post.type}</h1>
-                                    <h1 className="text-sm capitalize mt-2 mr-4">{getDate(post.date)}</h1>
-                                    <h1 className="text-sm capitalize mt-2">{post.likes} Likes</h1>
+                                    <h1 className="text-sm capitalize mt-2 mr-4 font-serif font-semibold cursor-pointer">{post.type}
+                                    </h1>
+                                    <div className="flex">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                            fill="currentColor" className="bi bi-calendar mt-2 mr-2"
+                                            viewBox="0 0 16 16">
+                                            <path
+                                                d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z" />
+                                        </svg>
+                                        <h1 className="text-sm capitalize mt-2 mr-4">{getDate(post.date)}</h1>
+                                    </div>
+
+                                    <h1 className="text-md capitalize mt-2 font-mono">{post.likes} Likes</h1>
                                 </div>
-                                <h1 className="text-sm mt-2 mr-4">- {post.postedBy}</h1>
+                                <h1 className="text-sm mt-2 mr-4 cursor-pointer">- {post.postedBy}</h1>
+                                <div className="flex mt-3 cursor-pointer">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                        className="bi bi-arrow-return-right mt-2 mr-2" viewBox="0 0 16 16">
+                                        <path fillRule="evenodd"
+                                            d="M1.5 1.5A.5.5 0 0 0 1 2v4.8a2.5 2.5 0 0 0 2.5 2.5h9.793l-3.347 3.346a.5.5 0 0 0 .708.708l4.2-4.2a.5.5 0 0 0 0-.708l-4-4a.5.5 0 0 0-.708.708L13.293 8.3H3.5A1.5 1.5 0 0 1 2 6.8V2a.5.5 0 0 0-.5-.5z" />
+                                    </svg>
+                                    <h1 className="text-md capitalize mt-1 font-mono">Read All Comments</h1>
+                                </div>
                             </div>
                             <div className='xl:w-1/5 sm:w-2/5 w-2/7 sm:mt-0 mt-5'>
-                                <h1 className="sm:text-lg text-xs bg-green-400 text-white px-5 py-2 rounded-md text-center cursor-pointer mb-3">Like
+                                <h1
+                                    className="sm:text-lg text-xs bg-green-400 text-white px-5 py-2 rounded-md text-center cursor-pointer mb-3">
+                                    Like
                                 </h1>
-                                <h1 className="sm:text-lg text-xs bg-green-400 text-white px-5 py-2 rounded-md text-center cursor-pointer">
+                                <h1
+                                    className="sm:text-lg text-xs bg-green-400 text-white px-5 py-2 rounded-md text-center cursor-pointer">
                                     Comment</h1>
                             </div>
                         </div>
                         }
                         )}
+                        {posts.length===0&&<div className="flex justify-center">
+                            <h1 className="text-lg text-center">No Posts Yet</h1>
+                            </div>}
                     </div>
                 </div>
                 <div className="xl:w-1/4 w-2/5 text-center bg-yellow-400 rounded-lg h-full md:block hidden">
                     <h1 className="text-xl my-5">People You Might Know</h1>
                     <div className="w-3/4 mx-auto">
                         <div className="flex justify-between items-center mt-3">
-                            <Avatar className="w-16 h-16" alt="Remy Sharp" src="https://source.unsplash.com/1600x900/?celebrity" />
+                            <Avatar className="w-16 h-16" alt="Remy Sharp"
+                                src="https://source.unsplash.com/1600x900/?celebrity" />
                             <div>
                                 <h1 className="text-lg">Remy Sharp</h1>
                                 <h1 className="text-sm">@remy</h1>
@@ -168,7 +194,8 @@ const Main = () => {
                             </div>
                         </div>
                         <div className="flex justify-between items-center mt-3">
-                            <Avatar className="w-16 h-16" alt="Kelly Dirk" src="https://source.unsplash.com/1600x900/?actor" />
+                            <Avatar className="w-16 h-16" alt="Kelly Dirk"
+                                src="https://source.unsplash.com/1600x900/?actor" />
                             <div>
                                 <h1 className="text-lg">Kelly Dirk</h1>
                                 <h1 className="text-sm">@keld</h1>
@@ -179,7 +206,8 @@ const Main = () => {
                             </div>
                         </div>
                         <div className="flex justify-between items-center mt-3">
-                            <Avatar className="w-16 h-16" alt="Daniel Hose" src="https://source.unsplash.com/1600x900/?scientist" />
+                            <Avatar className="w-16 h-16" alt="Daniel Hose"
+                                src="https://source.unsplash.com/1600x900/?scientist" />
                             <div>
                                 <h1 className="text-lg">Daniel Hose</h1>
                                 <h1 className="text-sm">@dany</h1>
@@ -193,7 +221,8 @@ const Main = () => {
                     <h1 className="text-xl mb-5 mt-16">Top Creators</h1>
                     <div className="w-3/4 mx-auto mb-5">
                         <div className="flex justify-between items-center mt-3">
-                            <Avatar className="w-16 h-16" alt="Remy Sharp" src="https://source.unsplash.com/1600x900/?author" />
+                            <Avatar className="w-16 h-16" alt="Remy Sharp"
+                                src="https://source.unsplash.com/1600x900/?author" />
                             <div>
                                 <h1 className="text-lg">Sherry Dillons</h1>
                                 <h1 className="text-sm">@shed</h1>
@@ -204,7 +233,8 @@ const Main = () => {
                             </div>
                         </div>
                         <div className="flex justify-between items-center mt-3">
-                            <Avatar className="w-16 h-16" alt="Candice Rol" src="https://source.unsplash.com/1600x900/?director" />
+                            <Avatar className="w-16 h-16" alt="Candice Rol"
+                                src="https://source.unsplash.com/1600x900/?director" />
                             <div>
                                 <h1 className="text-lg">Candice Rol</h1>
                                 <h1 className="text-sm">@carol</h1>
@@ -215,7 +245,8 @@ const Main = () => {
                             </div>
                         </div>
                         <div className="flex justify-between items-center mt-3">
-                            <Avatar className="w-16 h-16" alt="Joseph Beth" src="https://source.unsplash.com/1600x900/?gamer" />
+                            <Avatar className="w-16 h-16" alt="Joseph Beth"
+                                src="https://source.unsplash.com/1600x900/?gamer" />
                             <div>
                                 <h1 className="text-lg">Joseph Beth</h1>
                                 <h1 className="text-sm">@Joe</h1>
