@@ -22,8 +22,12 @@ const Main = () => {
     const [title, setTitle] = useState('');
     const [type, setType] = useState('');
     const [posts, setPosts] = useState([]);
+    const [postsLikedByUser, setPostsLikedByUser] = useState([])
     const [token, setToken] = useState('');
     const [loading, setLoading] = useState(false);
+
+    const [getPostsLoading, setGetPostsLoading] = useState(false)
+    const [getLikesLoading, setGetLikesLoading] = useState(false)
 
     useEffect(() => {
         console.log('Main')
@@ -34,12 +38,14 @@ const Main = () => {
         }
         else {
             getPosts(s)
+            getPostsLikedByUser(s)
         }
     }, [])
 
 
     const getPosts = async (token) => {
         var data = new FormData();
+        setGetPostsLoading(true)
         var config = {
             method: 'get',
             url: 'https://simply-backend.vercel.app/posts',
@@ -51,13 +57,35 @@ const Main = () => {
 
         axios(config)
             .then(function (response) {
-                //console.log(JSON.stringify(response.data.Body[0]));
                 let a = response.data.Body.reverse()
-                //console.log(a)
                 setPosts(a)
+                setGetPostsLoading(false)
             })
             .catch(function (error) {
                 console.log(error);
+                setGetPostsLoading(false)
+            });
+    }
+
+    const getPostsLikedByUser = async (token) => {
+        setGetLikesLoading(true)
+        let config = {
+            method: 'get',
+            maxBodyLength: Infinity,
+            url: 'https://simply-backend.vercel.app/like',
+            headers: {
+                'Authorization': 'Bearer ' + token
+            }
+        };
+
+        axios.request(config)
+            .then((response) => {
+                setPostsLikedByUser(response.data.Body.map((item) => { return item.ofPost }))
+                setGetLikesLoading(false)
+            })
+            .catch((error) => {
+                console.log(error);
+                setGetLikesLoading(false)
             });
     }
 
@@ -82,6 +110,7 @@ const Main = () => {
                 setType('select')
                 setTitle('')
                 getPosts(token)
+                setPostsLikedByUser(token)
                 setLoading(false)
             })
             .catch(function (error) {
@@ -92,6 +121,53 @@ const Main = () => {
                 setLoading(false)
             });
 
+    }
+
+    const likeHandler = (id) => {
+        let data = JSON.stringify({
+            "ofPost": id
+        });
+
+        let config = {
+            method: 'post',
+            maxBodyLength: Infinity,
+            url: 'https://simply-backend.vercel.app/like',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token
+            },
+            data: data
+        };
+
+        axios.request(config)
+            .then((response) => {
+                //console.log(JSON.stringify(response.data));
+                toast.success("Success");
+                getPosts(token)
+                getPostsLikedByUser(token)
+            })
+            .catch((error) => {
+                //console.log(error);
+                toast.error("Some error occured");
+            });
+    }
+
+    const showComments = async (id) => {
+        let config = {
+            method: 'get',
+            maxBodyLength: Infinity,
+            url: 'https://simply-backend.vercel.app/comment/' + id,
+            headers: {
+                'Authorization': 'Bearer ' + token
+            }
+        };
+        axios.request(config)
+            .then((response) => {
+                console.log(JSON.stringify(response.data));
+            })
+            .catch((error) => {
+                console.log(error);
+            });
     }
 
     const logout = () => {
@@ -132,7 +208,7 @@ const Main = () => {
                                 <CircularProgress /> : "Post"}</button>
                     </div>
                     <div className="lg:w-4/5 w-full">
-                        {posts.length > 0 && posts.map((post, index) => {
+                        {(!getPostsLoading && !getLikesLoading && posts.length > 0) && posts.map((post, index) => {
                             return <div className="flex justify-between mt-8 mb-16" key={index}>
                                 <div className="sm:w-3/5 w-5/7">
                                     <h1 className="text-2xl italic">{'"' + post.title + '"'}</h1>
@@ -158,13 +234,14 @@ const Main = () => {
                                             <path fillRule="evenodd"
                                                 d="M1.5 1.5A.5.5 0 0 0 1 2v4.8a2.5 2.5 0 0 0 2.5 2.5h9.793l-3.347 3.346a.5.5 0 0 0 .708.708l4.2-4.2a.5.5 0 0 0 0-.708l-4-4a.5.5 0 0 0-.708.708L13.293 8.3H3.5A1.5 1.5 0 0 1 2 6.8V2a.5.5 0 0 0-.5-.5z" />
                                         </svg>
-                                        <h1 className="text-md capitalize mt-1 font-mono">Read All Comments</h1>
+                                        <h1 onClick={() => { showComments(post._id) }} className="text-md capitalize mt-1 font-mono">Read All Comments</h1>
                                     </div>
                                 </div>
                                 <div className='xl:w-1/5 sm:w-2/5 w-2/7 sm:mt-0 mt-5'>
                                     <h1
+                                        onClick={() => { likeHandler(post._id) }}
                                         className="sm:text-lg text-xs bg-green-400 text-white px-5 py-2 rounded-md text-center cursor-pointer mb-3">
-                                        Like
+                                        {postsLikedByUser.includes(post._id) ? "Unlike" : "Like"}
                                     </h1>
                                     <h1
                                         className="sm:text-lg text-xs bg-green-400 text-white px-5 py-2 rounded-md text-center cursor-pointer">
@@ -173,13 +250,14 @@ const Main = () => {
                             </div>
                         }
                         )}
-                        {posts.length === 0 && <div className="flex justify-center">
+                        {(!getPostsLoading && !getLikesLoading && posts.length === 0) && <div className="flex justify-center">
                             <h1 className="text-lg text-center">No Posts Yet</h1>
                         </div>}
+                        {(getPostsLoading || getLikesLoading) && <CircularProgress />}
                     </div>
                 </div>
                 <div className="xl:w-1/4 w-2/5 text-center bg-yellow-400 rounded-lg h-full md:block hidden">
-                    <h1 className="text-xl my-5">People You Might Know</h1>
+                    <h1 className="text-xl my-5">New Creators</h1>
                     <div className="w-3/4 mx-auto">
                         <div className="flex justify-between items-center mt-3">
                             <Avatar className="w-16 h-16" alt="Remy Sharp"
